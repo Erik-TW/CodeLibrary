@@ -21,6 +21,10 @@ namespace CodeLibrary.Data.Services
         public Task<IEnumerable<Book>> GetBooksFilteredByTitle(string searchValue);
         public Task<IEnumerable<Book>> GetBooksSortedByGenre();
         public Task<IEnumerable<Book>> GetBooksFilteredByGenre(string searchValue);
+        public Task<IEnumerable<Book>> GetBooksSortedByDescription();
+        public Task<IEnumerable<Book>> GetBooksFilteredByDescription(string searchValue);
+        public Task<IEnumerable<Book>> GetBooksSortedByPublishedDate();
+        public Task<IEnumerable<Book>> GetBooksFilteredByPublishedDate(int year, int month, int day);
         public Task<IEnumerable<Book>> GetBooksSortedByPrice();
         public Task<IEnumerable<Book>> GetBooksFilteredByPrice(double price);
         public Task<IEnumerable<Book>> GetBooksWithinPriceRange(double minPrice, double maxPrice);
@@ -87,6 +91,27 @@ namespace CodeLibrary.Data.Services
         public async Task<IEnumerable<Book>> GetBooksFilteredByGenre(string searchValue)
         {
             return await _context.Books.Where(b => !string.IsNullOrEmpty(b.Genre) && b.Genre.ToLower().Contains(searchValue.ToLower())).OrderBy(b => b.Genre).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksSortedByDescription()
+        {
+            return await _context.Books.OrderBy(b => b.Description).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksFilteredByDescription(string searchValue)
+        {
+            return await _context.Books.Where(b => !string.IsNullOrEmpty(b.Description) && b.Description.ToLower().Contains(searchValue.ToLower())).OrderBy(b => b.Description).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksSortedByPublishedDate()
+        {
+            return await _context.Books.OrderBy(b => b.Publish_Date).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksFilteredByPublishedDate(int year, int month, int day)
+        {
+            var date = new DateTime(year, month, day);
+            return await _context.Books.Where(b => b.Publish_Date.HasValue && b.Publish_Date.Value >= date).OrderBy(b => b.Publish_Date).ToListAsync();
         }
 
         public async Task<IEnumerable<Book>> GetBooksSortedByPrice()

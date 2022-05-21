@@ -41,10 +41,10 @@ namespace CodeLibrary.Controllers
             return await _bookService.GetBooksSortedByAuthor();
         }
 
-        [HttpGet("author/{id}")]
-        public async Task<IEnumerable<Book>> GetBooksSortedByAuthor(string id)
+        [HttpGet("author/{value}")]
+        public async Task<IEnumerable<Book>> GetBooksSortedByAuthor(string value)
         {
-            return await _bookService.GetBooksFilteredByAuthor(id);
+            return await _bookService.GetBooksFilteredByAuthor(value);
         }
 
         [HttpGet("title")]
@@ -53,10 +53,10 @@ namespace CodeLibrary.Controllers
             return await _bookService.GetBooksSortedByTitle();
         }
 
-        [HttpGet("title/{id}")]
-        public async Task<IEnumerable<Book>> GetBooksSortedByTitle(string id)
+        [HttpGet("title/{value}")]
+        public async Task<IEnumerable<Book>> GetBooksSortedByTitle(string value)
         {
-            return await _bookService.GetBooksFilteredByTitle(id);
+            return await _bookService.GetBooksFilteredByTitle(value);
         }
 
         [HttpGet("genre")]
@@ -65,10 +65,45 @@ namespace CodeLibrary.Controllers
             return await _bookService.GetBooksSortedByGenre();
         }
 
-        [HttpGet("genre/{id}")]
-        public async Task<IEnumerable<Book>> GetBooksSortedByGenre(string id)
+        [HttpGet("genre/{value}")]
+        public async Task<IEnumerable<Book>> GetBooksSortedByGenre(string value)
         {
-            return await _bookService.GetBooksFilteredByGenre(id);
+            return await _bookService.GetBooksFilteredByGenre(value);
+        }
+        [HttpGet("description")]
+        public async Task<IEnumerable<Book>> GetBooksSortedByDescription()
+        {
+            return await _bookService.GetBooksSortedByDescription();
+        }
+
+        [HttpGet("description/{value}")]
+        public async Task<IEnumerable<Book>> GetBooksSortedByDescription(string value)
+        {
+            return await _bookService.GetBooksFilteredByDescription(value);
+        }
+
+        [HttpGet("published")]
+        public async Task<IEnumerable<Book>> GetBooksSortedByPublishedDate()
+        {
+            return await _bookService.GetBooksSortedByPublishedDate();
+        }
+
+        [HttpGet("published/{year}")]
+        public async Task<IEnumerable<Book>> GetBooksSortedByPublishedYear(int year)
+        {
+            return await _bookService.GetBooksFilteredByPublishedDate(year, 1, 1);
+        }
+
+        [HttpGet("published/{year}/{month}")]
+        public async Task<IEnumerable<Book>> GetBooksSortedByPublishedYearMonth(int year, int month)
+        {
+            return await _bookService.GetBooksFilteredByPublishedDate(year, month, 1);
+        }
+
+        [HttpGet("published/{year}/{month}/{day}")]
+        public async Task<IEnumerable<Book>> GetBooksSortedByPublishedYearMonthDay(int year, int month, int day)
+        {
+            return await _bookService.GetBooksFilteredByPublishedDate(year, month, day);
         }
 
         [HttpGet("price")]
@@ -76,6 +111,7 @@ namespace CodeLibrary.Controllers
         {
             return await _bookService.GetBooksSortedByPrice();
         }
+
 
         [HttpGet("price/{price}")]
         public async Task<ActionResult<IEnumerable<Book>>> GetBooksFilteredByPrice(string price)
