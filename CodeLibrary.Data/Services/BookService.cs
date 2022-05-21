@@ -16,7 +16,7 @@ namespace CodeLibrary.Data.Services
         public Task<Book> GetBook(string id);
         public Task<bool> PostBook(Book book);
         public Task<bool> PostBooks(List<Book> books);
-        public Task<bool> PutBook(Book book);
+        public Task<bool> PutBook(Book book, string id);
     }
     public class BookService : IBookService
     {
@@ -52,7 +52,6 @@ namespace CodeLibrary.Data.Services
             return true;
         }
 
-        //I don't believe it is part of the assignment to have a POST endpoint for a list of books, but in order to speed up seeding the database i decided to make one.
         public async Task<bool> PostBooks(List<Book> books)
         {
             var pkExists = FindNextId(out string id);
@@ -71,12 +70,12 @@ namespace CodeLibrary.Data.Services
             return true;
         }
 
-        public async Task<bool> PutBook(Book book)
+        public async Task<bool> PutBook(Book book, string id)
         {
-            if (await _context.Books.FirstOrDefaultAsync(b => b.Id == book.Id) == null)
+            if (!_context.Books.Any(b => b.Id == id))
                 return false;
 
-            _context.Entry(book).State = EntityState.Modified;
+            _context.Books.Update(book);
             await _context.SaveChangesAsync();
             return true;
         }
@@ -91,19 +90,27 @@ namespace CodeLibrary.Data.Services
             }
             else
             {
-                var highestId = _context.Books.Max(b => b.Id);
+                var highestId = _context.Books.Where(b => !string.IsNullOrEmpty(b.Id)).ToList().Max(b => ParsePrimaryKeyToInt(b.Id)); //Have to cast it to a list to ensure client side evaluation or my method cant be found
 
-                if (string.IsNullOrEmpty(highestId))
+                if (highestId <= 0)
                     return false;
 
-
-                if (int.TryParse(highestId.Substring(1), out var id))
-                {
-                    primaryKey = "B" + id;
-                    return true;
-                }
-                return false;
+                highestId++;
+                primaryKey = "B" + highestId;
+                return true;
             }
+        }
+
+        public int ParsePrimaryKeyToInt(string value) //Cannot use a tryParse in a LINQ query, so making a method that has the desireable effect and is usable in queries.
+        {
+            if (string.IsNullOrEmpty(value))
+                return -1;
+
+            var stringToParse = value.Substring(1);
+            if (int.TryParse(stringToParse, out int id))
+                return id;
+            else
+                return -1;
         }
     }
 }
