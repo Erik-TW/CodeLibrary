@@ -1,6 +1,7 @@
 ﻿using CodeLibrary.Data.Models;
 using CodeLibrary.Data.Services;
 using Microsoft.AspNetCore.Mvc;
+using System.Globalization;
 
 namespace CodeLibrary.Controllers
 {
@@ -89,14 +90,17 @@ namespace CodeLibrary.Controllers
                 if (prices.Length != 2)
                     return BadRequest();
 
-                if (double.TryParse(prices[0], out var minPrice) && double.TryParse(prices[1], out var maxPrice))
+                prices[0] = prices[0].Replace(',', '.');
+                prices[1] = prices[1].Replace(',', '.');
+                if (double.TryParse(prices[0], NumberStyles.Any, CultureInfo.InvariantCulture, out var minPrice) && double.TryParse(prices[1], NumberStyles.Any, CultureInfo.InvariantCulture, out var maxPrice))
                     return Ok(await _bookService.GetBooksWithinPriceRange(minPrice, maxPrice));
                 else
                     return BadRequest();
             }
             else
             {
-                if(double.TryParse(price, out var parsedPrice))
+                price = price.Replace(',', '.');
+                if (double.TryParse(price, NumberStyles.Any, CultureInfo.InvariantCulture, out var parsedPrice))
                     return Ok(await _bookService.GetBooksFilteredByPrice(parsedPrice));
                 else
                     return BadRequest();
