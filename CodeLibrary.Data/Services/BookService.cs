@@ -13,6 +13,17 @@ namespace CodeLibrary.Data.Services
     public interface IBookService
     {
         public Task<IEnumerable<Book>> GetBooks();
+        public Task<IEnumerable<Book>> GetBooksSortedById();
+        public Task<IEnumerable<Book>> GetBooksFilteredById(string searchValue);
+        public Task<IEnumerable<Book>> GetBooksSortedByAuthor();
+        public Task<IEnumerable<Book>> GetBooksFilteredByAuthor(string searchValue);
+        public Task<IEnumerable<Book>> GetBooksSortedByTitle();
+        public Task<IEnumerable<Book>> GetBooksFilteredByTitle(string searchValue);
+        public Task<IEnumerable<Book>> GetBooksSortedByGenre();
+        public Task<IEnumerable<Book>> GetBooksFilteredByGenre(string searchValue);
+        public Task<IEnumerable<Book>> GetBooksSortedByPrice();
+        public Task<IEnumerable<Book>> GetBooksFilteredByPrice(double price);
+        public Task<IEnumerable<Book>> GetBooksWithinPriceRange(double minPrice, double maxPrice);
         public Task<Book> GetBook(string id);
         public Task<bool> PostBook(Book book);
         public Task<bool> PostBooks(List<Book> books);
@@ -34,6 +45,63 @@ namespace CodeLibrary.Data.Services
         public async Task<IEnumerable<Book>> GetBooks()
         {
             return await _context.Books.ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksSortedById()
+        {
+            var books = await _context.Books.ToListAsync(); //cast to list so the expression can be evaluated client side and Parse method can be run
+            return books.OrderBy(b => ParsePrimaryKeyToInt(b.Id));
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksFilteredById(string searchValue)
+        {
+            
+            var books = await _context.Books.Where(b => !string.IsNullOrEmpty(b.Id) && b.Id.ToLower().Contains(searchValue.ToLower())).ToListAsync(); //cast to list so the expression can be evaluated client side and Parse method can be run
+            return books.OrderBy(b => ParsePrimaryKeyToInt(b.Id));
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksSortedByAuthor()
+        {
+            return await _context.Books.OrderBy(b => b.Author).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksFilteredByAuthor(string searchValue)
+        {
+            return await _context.Books.Where(b => !string.IsNullOrEmpty(b.Author) && b.Author.ToLower().Contains(searchValue.ToLower())).OrderBy(b => b.Author).ToListAsync();
+        }
+        public async Task<IEnumerable<Book>> GetBooksSortedByTitle()
+        {
+            return await _context.Books.OrderBy(b => b.Title).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksFilteredByTitle(string searchValue)
+        {
+            return await _context.Books.Where(b => !string.IsNullOrEmpty(b.Title) && b.Title.ToLower().Contains(searchValue.ToLower())).OrderBy(b => b.Title).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksSortedByGenre()
+        {
+            return await _context.Books.OrderBy(b => b.Genre).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksFilteredByGenre(string searchValue)
+        {
+            return await _context.Books.Where(b => !string.IsNullOrEmpty(b.Genre) && b.Genre.ToLower().Contains(searchValue.ToLower())).OrderBy(b => b.Genre).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksSortedByPrice()
+        {
+            return await _context.Books.OrderBy(b => b.Price).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksFilteredByPrice(double price)
+        {
+            return await _context.Books.Where(b => b.Price == price).ToListAsync();
+        }
+
+        public async Task<IEnumerable<Book>> GetBooksWithinPriceRange(double minPrice, double maxPrice)
+        {
+            return await _context.Books.Where(b => b.Price >= minPrice && b.Price <= maxPrice).OrderBy(b => b.Price).ToListAsync();
         }
 
         public async Task<bool> PostBook(Book book)
