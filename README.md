@@ -9,4 +9,4 @@ You do not need to run any migrations or database update scripts. The code will 
 
 The easiest way to populate the database with data is to send a POST request to https://host:port/api/books/multiple with the contents of books.json as the body. 
 
-All test cases have ben run and works for me. 
+All test cases have been run and works for me. 
